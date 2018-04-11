@@ -15,6 +15,7 @@
  */
 package com.yanzhenjie.permission.sample;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
@@ -31,6 +32,9 @@ import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.checker.DoubleChecker;
+import com.yanzhenjie.permission.checker.PermissionChecker;
+import com.yanzhenjie.permission.checker.StrictChecker;
 
 import java.util.List;
 
@@ -66,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btn_setting).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 AndPermission.permissionSetting(MainActivity.this)
                         .execute();
             }
@@ -265,18 +270,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void requestPermission(String... permissions) {
         AndPermission.with(this)
-                .permission(permissions)
+                .permission(Manifest.permission.READ_CONTACTS, Manifest.permission.READ_SMS, Manifest.permission.READ_CALL_LOG)
                 .rationale(mRationale)
                 .onGranted(new Action() {
                     @Override
                     public void onAction(List<String> permissions) {
-                        toast(R.string.successfully);
+
+
+                        PermissionChecker STRICT_CHECKER = new StrictChecker();
+                        PermissionChecker DOUBLE_CHECKER = new DoubleChecker();
+                        if(STRICT_CHECKER.hasPermission(MainActivity.this,permissions)){
+                            toast("有权利就是好");
+                        }else {
+                            toast("没有权限你搞啥");
+                        }
+
                     }
                 })
                 .onDenied(new Action() {
                     @Override
                     public void onAction(@NonNull List<String> permissions) {
-                        toast(R.string.failure);
+                        toast("没有权限你搞啥");
                         if (AndPermission.hasAlwaysDeniedPermission(MainActivity.this, permissions)) {
                             mSetting.showSetting(permissions);
                         }
@@ -333,6 +347,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     protected void toast(@StringRes int message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    protected void toast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

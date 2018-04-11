@@ -16,4 +16,3 @@ dependencies {
     implementation rootProject.ext.dependencies.fragment
 }
 
-apply from: "https://raw.githubusercontent.com/yanzhenjie/bintray/master/maven.gradle"

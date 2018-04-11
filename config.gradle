@@ -52,6 +52,7 @@ ext {
             design     : 'com.android.support:design:26.1.0',
 
             alertDialog: 'com.yanzhenjie.alertdialog:alertdialog:1.0.1',
-            permission : 'com.yanzhenjie:permission:2.0.0-rc4'
+            permission : 'com.yanzhenjie:permission:2.0.0-rc4',
+            gson       : "com.google.code.gson:gson:2.6.1"
     ]
 }
