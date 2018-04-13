@@ -15,6 +15,7 @@
  */
 package com.yanzhenjie.permission;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -40,7 +41,8 @@ import static java.util.Arrays.asList;
 class MRequest implements Request, RequestExecutor, PermissionActivity.PermissionListener {
 
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
-    private static final PermissionChecker CHECKER = new StandardChecker();
+
+    private static final PermissionChecker STANDARD_CHECKER = new StandardChecker();
     private static final PermissionChecker DOUBLE_CHECKER = new DoubleChecker();
 
     private Source mSource;
@@ -51,6 +53,27 @@ class MRequest implements Request, RequestExecutor, PermissionActivity.Permissio
     private Action mDenied;
 
     private String[] mDeniedPermissions;
+
+    private static final String MARK = Build.MANUFACTURER.toLowerCase();
+
+    private boolean isSpecPhone() {
+        if (MARK.contains("huawei")) {
+            return true;
+        } else if (MARK.contains("xiaomi")) {
+            return true;
+        } else if (MARK.contains("oppo")) {
+            return true;
+        } else if (MARK.contains("vivo")) {
+            return true;
+        } else if (MARK.contains("samsung")) {
+            return true;
+        } else if (MARK.contains("meizu")) {
+            return true;
+        } else if (MARK.contains("smartisan")) {
+            return true;
+        }
+        return false;
+    }
 
     MRequest(Source source) {
         this.mSource = source;
@@ -98,7 +121,7 @@ class MRequest implements Request, RequestExecutor, PermissionActivity.Permissio
 
     @Override
     public void start() {
-        List<String> deniedList = getDeniedPermissions(CHECKER, mSource, mPermissions);
+        List<String> deniedList = getDeniedPermissions(DOUBLE_CHECKER, mSource, mPermissions);
         mDeniedPermissions = deniedList.toArray(new String[deniedList.size()]);
         if (mDeniedPermissions.length > 0) {
             List<String> rationaleList = getRationalePermissions(mSource, mDeniedPermissions);
@@ -128,7 +151,7 @@ class MRequest implements Request, RequestExecutor, PermissionActivity.Permissio
         HANDLER.postDelayed(new Runnable() {
             @Override
             public void run() {
-                List<String> deniedList = getDeniedPermissions(DOUBLE_CHECKER, mSource, permissions);
+                List<String> deniedList = getDeniedPermissions(isSpecPhone()?DOUBLE_CHECKER:STANDARD_CHECKER, mSource, permissions);
                 if (deniedList.isEmpty()) {
                     callbackSucceed();
                 } else {

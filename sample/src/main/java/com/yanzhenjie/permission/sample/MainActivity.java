@@ -276,14 +276,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onAction(List<String> permissions) {
 
-
-                        PermissionChecker STRICT_CHECKER = new StrictChecker();
-                        PermissionChecker DOUBLE_CHECKER = new DoubleChecker();
-                        if(STRICT_CHECKER.hasPermission(MainActivity.this,permissions)){
-                            toast("有权利就是好");
-                        }else {
-                            toast("没有权限你搞啥");
-                        }
+                        toast("有权利就是好");
 
                     }
                 })
